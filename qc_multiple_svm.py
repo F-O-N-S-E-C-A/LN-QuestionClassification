@@ -29,7 +29,6 @@ def main(validation_file, train_file, operation):
 
     encoder = LabelEncoder()
     labels = encoder.fit_transform(corpus_validation['Label'])
-
     prediction = []
     # max - Accuracy:  0.878
     # weighted_sum - Accuracy: 0.864
@@ -90,6 +89,7 @@ def build_svm(corpus, corpus_validation, data_part):
 
     # print(Tfidf_vect.vocabulary_)
     # print(train_X_vector)
+
     svm = support_vector_machine(train_X, test_X, train_Y, test_Y)
     prediction = svm.predict_proba(test_X)
     return svm, prediction
@@ -129,7 +129,6 @@ def support_vector_machine(Train_X_Tfidf, Test_X_Tfidf, Train_Y, Test_Y):
     # Classifier - Algorithm - SVM
     # fit the training dataset on the classifier
     SVM = svm.SVC(C=1.0, kernel='linear', degree=3, gamma='auto', class_weight='balanced', probability=True)
-    #SVM = svm.SVC(C=1.0, kernel='linear', degree=3, gamma='auto')
     SVM.fit(Train_X_Tfidf, Train_Y)
     # predict the labels on validation dataset
     #predictions_SVM = SVM.predict_proba(Test_X_Tfidf)
@@ -149,7 +148,7 @@ def man():
 if __name__ == '__main__':
     if len(sys.argv) == 5:
         if sys.argv[1] == '-test' and sys.argv[3] == '-train':
-            main(validation_file=sys.argv[2], train_file=sys.argv[4], operation='joint_probability')
+            main(validation_file=sys.argv[2], train_file=sys.argv[4], operation='max')
         else:
             man()
     else:
