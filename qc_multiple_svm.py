@@ -17,48 +17,77 @@ from sklearn.metrics import accuracy_score
 
 
 def main(validation_file, train_file):
-    corpus = pd.read_csv(train_file, sep='\t', error_bad_lines=False, header=None)
-    corpus_validation = pd.read_csv(validation_file, sep='\t', error_bad_lines=False, header=None)
-    add_answers(corpus)
-    add_answers(corpus_validation)
+    corpus = pd.read_csv(train_file, sep='\t', error_bad_lines=False, header=None, names=["Label", "Question", "Answer"])
+    corpus_validation = pd.read_csv(validation_file, sep='\t', error_bad_lines=False, header=None, names=["Label", "Question", "Answer"])
     print(corpus)
 
-    tokenization(corpus)
-    tokenization(corpus_validation)
-    lemmatization(corpus)
-    lemmatization(corpus_validation)
-    #print(corpus)
-    #Train_X, Test_X, train_Y, test_Y = model_selection.train_test_split(corpus['lemma'], corpus[0], test_size=0.3)
+    questionSVM = question_svm(corpus, corpus_validation)
+    answerSVM = answer_svm(corpus, corpus_validation)
+
+
+def question_svm(corpus, corpus_validation):
+    tokenization(corpus, 'Question')
+    tokenization(corpus_validation, 'Question')
+
+    lemmatization(corpus, 'Question')
+    lemmatization(corpus_validation, 'Question')
+
+    # print(corpus)
+    # Train_X, Test_X, train_Y, test_Y = model_selection.train_test_split(corpus['lemma'], corpus[0], test_size=0.3)
 
     encoder = LabelEncoder()
-    train_Y = encoder.fit_transform(corpus[0])
-    test_Y = encoder.fit_transform(corpus_validation[0])
+    train_Y = encoder.fit_transform(corpus['Label'])
+    test_Y = encoder.fit_transform(corpus_validation['Label'])
 
     Tfidf_vect = TfidfVectorizer(max_features=5000)
-    Tfidf_vect.fit(corpus['lemma'])
-    train_X = Tfidf_vect.transform(corpus['lemma'])
-    test_X = Tfidf_vect.transform(corpus_validation['lemma'])
+    Tfidf_vect.fit(corpus['lemma_Question'])
+    train_X = Tfidf_vect.transform(corpus['lemma_Question'])
+    test_X = Tfidf_vect.transform(corpus_validation['lemma_Question'])
 
-    #print(Tfidf_vect.vocabulary_)
-    #print(train_X_vector)
+    # print(Tfidf_vect.vocabulary_)
+    # print(train_X_vector)
+    support_vector_machine(train_X, test_X, train_Y, test_Y)
+
+def answer_svm(corpus, corpus_validation):
+    #corpus['Answer'] = [str(entry) for entry in corpus['Answer']]
+    tokenization(corpus, 'Answer')
+    tokenization(corpus_validation, 'Answer')
+
+    lemmatization(corpus, 'Answer')
+    lemmatization(corpus_validation, 'Answer')
+
+    # print(corpus)
+    # Train_X, Test_X, train_Y, test_Y = model_selection.train_test_split(corpus['lemma'], corpus[0], test_size=0.3)
+
+    encoder = LabelEncoder()
+    train_Y = encoder.fit_transform(corpus['Label'])
+    test_Y = encoder.fit_transform(corpus_validation['Label'])
+
+    Tfidf_vect = TfidfVectorizer(max_features=5000)
+    Tfidf_vect.fit(corpus['lemma_Answer'])
+    train_X = Tfidf_vect.transform(corpus['lemma_Answer'])
+    test_X = Tfidf_vect.transform(corpus_validation['lemma_Answer'])
+
+    # print(Tfidf_vect.vocabulary_)
+    # print(train_X_vector)
     support_vector_machine(train_X, test_X, train_Y, test_Y)
 
 def add_answers(corpus):
     corpus[1] = corpus[1] + ' ' + corpus[2].astype(str)
 
 
-def tokenization(corpus):
-    corpus[1] = [entry.lower() for entry in corpus[1]]
-    corpus[1] = [word_tokenize(entry) for entry in corpus[1]]
+def tokenization(df, index):
+    df[index] = [str(entry).lower() for entry in df[index]]
+    df[index] = [word_tokenize(entry) for entry in df[index]]
 
 
-def lemmatization(corpus):
+def lemmatization(corpus, column):
     tag_map = defaultdict(lambda: wn.NOUN)
     tag_map['J'] = wn.ADJ
     tag_map['V'] = wn.VERB
     tag_map['R'] = wn.ADV
 
-    for index, entry in enumerate(corpus[1]):
+    for index, entry in enumerate(corpus[column]):
         # Declaring Empty List to store the words that follow the rules for this step
         Final_words = []
         # Initializing WordNetLemmatizer()
@@ -70,7 +99,8 @@ def lemmatization(corpus):
                 word_Final = word_Lemmatized.lemmatize(word, tag_map[tag[0]])
                 Final_words.append(word_Final)
         # The final processed set of words for each iteration will be stored in 'text_final'
-        corpus.loc[index, 'lemma'] = str(Final_words)
+        corpus.loc[index, 'lemma_'+column] = str(Final_words)
+    print(corpus)
 
 
 def support_vector_machine(Train_X_Tfidf, Test_X_Tfidf, Train_Y, Test_Y):
@@ -83,6 +113,7 @@ def support_vector_machine(Train_X_Tfidf, Test_X_Tfidf, Train_Y, Test_Y):
     predictions_SVM = SVM.predict(Test_X_Tfidf)
     # Use accuracy_score function to get the accuracy
     print("SVM Accuracy: ", accuracy_score(predictions_SVM, Test_Y))
+    return SVM
 
 def man():
     print('LN 2021 - Tiago Fonseca - 102138 & João Lopes - 90732\n')
