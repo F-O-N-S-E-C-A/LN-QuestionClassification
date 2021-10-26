@@ -16,13 +16,49 @@ from sklearn import model_selection, naive_bayes, svm
 from sklearn.metrics import accuracy_score
 
 
-def main(validation_file, train_file):
+def main(validation_file, train_file, operation):
     corpus = pd.read_csv(train_file, sep='\t', error_bad_lines=False, header=None, names=["Label", "Question", "Answer"])
     corpus_validation = pd.read_csv(validation_file, sep='\t', error_bad_lines=False, header=None, names=["Label", "Question", "Answer"])
     print(corpus)
 
-    questionSVM = question_svm(corpus, corpus_validation)
-    answerSVM = answer_svm(corpus, corpus_validation)
+    questionSVM, question_prediction = question_svm(corpus, corpus_validation)
+    answerSVM, answer_prediction = answer_svm(corpus, corpus_validation)
+
+    #print(question_prediction)
+    #print(answer_prediction)
+
+    encoder = LabelEncoder()
+    labels = encoder.fit_transform(corpus_validation['Label'])
+
+    accuracy_question = accuracy_score(prob_vector_to_guess(question_prediction), labels)
+    accuracy_answer = accuracy_score(prob_vector_to_guess(answer_prediction), labels)
+
+    print('Accuracy Question SVM: ', accuracy_question, ' Accuracy Answer SVM: ', accuracy_answer)
+
+    prediction = []
+    for i in range(0, len(answer_prediction)):
+        # max - Accuracy:  0.878
+        # weighted_sum - Accuracy: 0.864
+        if operation == 'max':
+            if max(question_prediction[i]) > max(answer_prediction[i]):
+                prediction.append(np.argmax(question_prediction[i]))
+            else:
+                prediction.append(np.argmax(answer_prediction[i]))
+        elif operation == 'weighted_sum':
+            # avr
+            vec = []
+            for j in range(0, len(question_prediction[i])):
+                vec.append(question_prediction[i][j] * accuracy_question + answer_prediction[i][j] * accuracy_answer)
+            prediction.append(vec.index(max(vec)))
+
+    print('Accuracy: ', accuracy_score(prediction, labels))
+
+
+def prob_vector_to_guess(list):
+    res = []
+    for l in list:
+        res.append(np.argmax(l))
+    return res
 
 
 def question_svm(corpus, corpus_validation):
@@ -46,7 +82,9 @@ def question_svm(corpus, corpus_validation):
 
     # print(Tfidf_vect.vocabulary_)
     # print(train_X_vector)
-    support_vector_machine(train_X, test_X, train_Y, test_Y)
+    svm = support_vector_machine(train_X, test_X, train_Y, test_Y)
+    prediction = svm.predict_proba(test_X)
+    return svm, prediction
 
 def answer_svm(corpus, corpus_validation):
     #corpus['Answer'] = [str(entry) for entry in corpus['Answer']]
@@ -70,7 +108,9 @@ def answer_svm(corpus, corpus_validation):
 
     # print(Tfidf_vect.vocabulary_)
     # print(train_X_vector)
-    support_vector_machine(train_X, test_X, train_Y, test_Y)
+    svm = support_vector_machine(train_X, test_X, train_Y, test_Y)
+    prediction = svm.predict_proba(test_X)
+    return svm, prediction
 
 def add_answers(corpus):
     corpus[1] = corpus[1] + ' ' + corpus[2].astype(str)
@@ -106,14 +146,15 @@ def lemmatization(corpus, column):
 def support_vector_machine(Train_X_Tfidf, Test_X_Tfidf, Train_Y, Test_Y):
     # Classifier - Algorithm - SVM
     # fit the training dataset on the classifier
-    SVM = svm.SVC(C=1.0, kernel='linear', degree=3, gamma='auto', class_weight='balanced')
+    SVM = svm.SVC(C=1.0, kernel='linear', degree=3, gamma='auto', class_weight='balanced', probability=True)
     #SVM = svm.SVC(C=1.0, kernel='linear', degree=3, gamma='auto')
     SVM.fit(Train_X_Tfidf, Train_Y)
     # predict the labels on validation dataset
-    predictions_SVM = SVM.predict(Test_X_Tfidf)
+    #predictions_SVM = SVM.predict_proba(Test_X_Tfidf)
     # Use accuracy_score function to get the accuracy
-    print("SVM Accuracy: ", accuracy_score(predictions_SVM, Test_Y))
+    #print("SVM Accuracy: ", accuracy_score(predictions_SVM, Test_Y))
     return SVM
+
 
 def man():
     print('LN 2021 - Tiago Fonseca - 102138 & João Lopes - 90732\n')
@@ -126,7 +167,7 @@ def man():
 if __name__ == '__main__':
     if len(sys.argv) == 5:
         if sys.argv[1] == '-test' and sys.argv[3] == '-train':
-            main(validation_file=sys.argv[2], train_file=sys.argv[4])
+            main(validation_file=sys.argv[2], train_file=sys.argv[4], operation='weighted_sum')
         else:
             man()
     else:
