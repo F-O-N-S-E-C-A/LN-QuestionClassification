@@ -31,7 +31,6 @@ def main(validation_file, train_file, operation):
     labels = encoder.fit_transform(corpus_validation['Label'])
 
     prediction = []
-
     # max - Accuracy:  0.878
     # weighted_sum - Accuracy: 0.864
     # joint_probability - Accuracy: 0.864
@@ -67,6 +66,7 @@ def prob_vector_to_guess(list):
     for l in list:
         res.append(np.argmax(l))
     return res
+
 
 def build_svm(corpus, corpus_validation, data_part):
     tokenization(corpus, data_part)
