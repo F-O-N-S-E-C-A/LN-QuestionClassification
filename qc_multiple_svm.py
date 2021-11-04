@@ -50,6 +50,7 @@ def main(validation_file, train_file, operation):
             for j in range(0, len(question_prediction[i])):
                 vec.append(question_prediction[i][j] * accuracy_question + answer_prediction[i][j] * accuracy_answer)
             prediction.append(vec.index(max(vec)))
+
     elif operation == 'joint_probability':
         for i in range(0, len(answer_prediction)):
             vec = []
@@ -81,7 +82,7 @@ def build_svm(corpus, corpus_validation, data_part):
     train_Y = encoder.fit_transform(corpus['Label'])
     test_Y = encoder.fit_transform(corpus_validation['Label'])
 
-    Tfidf_vect = TfidfVectorizer(max_features=5000)
+    Tfidf_vect = TfidfVectorizer(max_features=10000) #10000
     lemma = 'lemma_' + data_part
     Tfidf_vect.fit(corpus[lemma])
     train_X = Tfidf_vect.transform(corpus[lemma])
