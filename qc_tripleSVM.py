@@ -3,11 +3,10 @@
 import sys
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 from nltk.tokenize import word_tokenize
 from nltk import pos_tag
 from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer
+from nltk.stem import WordNetLemmatizer, PorterStemmer, LancasterStemmer
 from sklearn.preprocessing import LabelEncoder
 from collections import defaultdict
 from nltk.corpus import wordnet as wn
@@ -35,9 +34,6 @@ def main(validation_file, train_file, operation):
     questionSVM, question_prediction = build_svm(corpus, corpus_validation, data_part='Question')
     answerSVM, answer_prediction = build_svm(corpus, corpus_validation, data_part='Answer')
     q_and_a_SVM, q_and_a_prediction = build_svm(corpus, corpus_validation, data_part='Q+A')
-
-    #print(question_prediction)
-    #print(answer_prediction)
 
     encoder = LabelEncoder()
     labels = encoder.fit_transform(corpus_validation['Label'])
@@ -94,15 +90,10 @@ def build_svm(corpus, corpus_validation, data_part):
     tokenization(corpus, data_part)
     tokenization(corpus_validation, data_part)
 
-    #lemmatization(corpus, data_part)
-    #lemmatization(corpus_validation, data_part)
-    pre_processing(corpus, data_part)
-    pre_processing(corpus_validation, data_part)
-
-
+    word_lemmatizer(corpus, data_part)
+    word_lemmatizer(corpus_validation, data_part)
 
     print(corpus)
-    # Train_X, Test_X, train_Y, test_Y = model_selection.train_test_split(corpus['lemma'], corpus[0], test_size=0.3)
 
     encoder = LabelEncoder()
     train_Y = encoder.fit_transform(corpus['Label'])
@@ -114,9 +105,6 @@ def build_svm(corpus, corpus_validation, data_part):
     train_X = Tfidf_vect.transform(corpus[lemma])
     test_X = Tfidf_vect.transform(corpus_validation[lemma])
 
-    # print(Tfidf_vect.vocabulary_)
-    # print(train_X_vector)
-
     svm = support_vector_machine(train_X, test_X, train_Y, test_Y)
     prediction = svm.predict_proba(test_X)
     return svm, prediction
@@ -127,29 +115,7 @@ def tokenization(df, index):
     df[index] = [word_tokenize(entry) for entry in df[index]]
 
 
-def lemmatization(corpus, column):
-    tag_map = defaultdict(lambda: wn.NOUN)
-    tag_map['J'] = wn.ADJ
-    tag_map['V'] = wn.VERB
-    tag_map['R'] = wn.ADV
-
-    for index, entry in enumerate(corpus[column]):
-        # Declaring Empty List to store the words that follow the rules for this step
-        Final_words = []
-        # Initializing WordNetLemmatizer()
-        word_Lemmatized = WordNetLemmatizer()
-        # pos_tag function below will provide the 'tag' i.e if the word is Noun(N) or Verb(V) or something else.
-        for word, tag in pos_tag(entry):
-            # Below condition is to check for Stop words and consider only alphabets
-            if word not in stopwords.words('english') and word.isalpha():
-                word_Final = word_Lemmatized.lemmatize(word, tag_map[tag[0]])
-                Final_words.append(word_Final)
-        # The final processed set of words for each iteration will be stored in 'text_final'
-        corpus.loc[index, 'lemma_'+column] = str(Final_words)
-    #print(corpus)
-
-
-def pre_processing(corpus, column):
+def word_lemmatizer(corpus, column):
     tag_map = defaultdict(lambda: wn.NOUN)
     tag_map['J'] = wn.ADJ
     tag_map['V'] = wn.VERB
@@ -163,27 +129,11 @@ def pre_processing(corpus, column):
                 Final_words.append(WordNetLemmatizer().lemmatize(word, tag_map[tag[0]]))
                 Final_words.append(word)
         corpus.loc[index, 'lemma_' + column] = str(Final_words)
-    # print(corpus)
-
-    '''for index, entry in enumerate(corpus[column]):
-        Final_words = []
-        for word, tag in pos_tag(entry):
-            if word not in stopwords.words('english') and (word.isalpha() or any(c.isdigit() for c in word)):
-                word_Final = word
-                Final_words.append(word_Final)
-        corpus.loc[index, 'lemma_' + column] = str(Final_words)
-    # print(corpus)'''
 
 
 def support_vector_machine(Train_X_Tfidf, Test_X_Tfidf, Train_Y, Test_Y):
-    # Classifier - Algorithm - SVM
-    # fit the training dataset on the classifier
     SVM = svm.SVC(C=1.0, kernel='linear', degree=3, gamma='auto', class_weight='balanced', probability=True)
     SVM.fit(Train_X_Tfidf, Train_Y)
-    # predict the labels on validation dataset
-    #predictions_SVM = SVM.predict_proba(Test_X_Tfidf)
-    # Use accuracy_score function to get the accuracy
-    #print("SVM Accuracy: ", accuracy_score(predictions_SVM, Test_Y))
     return SVM
 
 

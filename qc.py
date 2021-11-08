@@ -2,18 +2,16 @@
 
 import sys
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
 from nltk.tokenize import word_tokenize
-from nltk import pos_tag
-from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer
+import numpy as np
 from sklearn.preprocessing import LabelEncoder
-from collections import defaultdict
-from nltk.corpus import wordnet as wn
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn import model_selection, naive_bayes, svm
+from sklearn import svm
 from sklearn.metrics import accuracy_score
+import random
+
+random.seed(10)
+np.random.seed(999)
 
 
 def main(validation_file, train_file):
@@ -21,14 +19,12 @@ def main(validation_file, train_file):
     corpus_validation = pd.read_csv(validation_file, sep='\t', error_bad_lines=False, header=None)
     add_answers(corpus)
     add_answers(corpus_validation)
-    print(corpus)
 
     tokenization(corpus)
     tokenization(corpus_validation)
-    lemmatization(corpus)
-    lemmatization(corpus_validation)
-    #print(corpus)
-    #Train_X, Test_X, train_Y, test_Y = model_selection.train_test_split(corpus['lemma'], corpus[0], test_size=0.3)
+
+    pre_p(corpus)
+    pre_p(corpus_validation)
 
     encoder = LabelEncoder()
     train_Y = encoder.fit_transform(corpus[0])
@@ -39,9 +35,8 @@ def main(validation_file, train_file):
     train_X = Tfidf_vect.transform(corpus['lemma'])
     test_X = Tfidf_vect.transform(corpus_validation['lemma'])
 
-    #print(Tfidf_vect.vocabulary_)
-    #print(train_X_vector)
     support_vector_machine(train_X, test_X, train_Y, test_Y)
+
 
 def add_answers(corpus):
     corpus[1] = corpus[1] + ' ' + corpus[2].astype(str)
@@ -52,37 +47,24 @@ def tokenization(corpus):
     corpus[1] = [word_tokenize(entry) for entry in corpus[1]]
 
 
-def lemmatization(corpus):
-    tag_map = defaultdict(lambda: wn.NOUN)
-    tag_map['J'] = wn.ADJ
-    tag_map['V'] = wn.VERB
-    tag_map['R'] = wn.ADV
-
+def pre_p(corpus):
+    stop_words = ['what', 'who', 'when', 'which', 'this', 'in', 'on', 'at', 'the', 'if', 'a', 'it', 'he', 'she', 'they', 'we']
     for index, entry in enumerate(corpus[1]):
-        # Declaring Empty List to store the words that follow the rules for this step
         Final_words = []
-        # Initializing WordNetLemmatizer()
-        word_Lemmatized = WordNetLemmatizer()
-        # pos_tag function below will provide the 'tag' i.e if the word is Noun(N) or Verb(V) or something else.
-        for word, tag in pos_tag(entry):
-            # Below condition is to check for Stop words and consider only alphabets
-            if word not in stopwords.words('english') and word.isalpha():
-                word_Final = word_Lemmatized.lemmatize(word, tag_map[tag[0]])
-                Final_words.append(word_Final)
-        # The final processed set of words for each iteration will be stored in 'text_final'
+        for word in entry:
+
+            if word not in stop_words and word.isalpha():
+                Final_words.append(word)
+
         corpus.loc[index, 'lemma'] = str(Final_words)
 
 
 def support_vector_machine(Train_X_Tfidf, Test_X_Tfidf, Train_Y, Test_Y):
-    # Classifier - Algorithm - SVM
-    # fit the training dataset on the classifier
-    SVM = svm.SVC(C=1.0, kernel='linear', degree=3, gamma='auto', class_weight='balanced')
-    #SVM = svm.SVC(C=1.0, kernel='linear', degree=3, gamma='auto')
+    SVM = svm.SVC(C=1.0, kernel='linear', degree=3, gamma='auto')
     SVM.fit(Train_X_Tfidf, Train_Y)
-    # predict the labels on validation dataset
     predictions_SVM = SVM.predict(Test_X_Tfidf)
-    # Use accuracy_score function to get the accuracy
     print("SVM Accuracy: ", accuracy_score(predictions_SVM, Test_Y))
+
 
 def man():
     print('LN 2021 - Tiago Fonseca - 102138 & João Lopes - 90732\n')
