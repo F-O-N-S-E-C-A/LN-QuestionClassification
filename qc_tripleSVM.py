@@ -81,8 +81,6 @@ def main(validation_file, train_file, operation):
             print(corpus['Q+A'][i])'''
 
 
-
-
 def concat_questions_answers(corpus):
     corpus['Q+A'] = corpus['Question'] + ' ' + corpus['Answer'].astype(str)
 
