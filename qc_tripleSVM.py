@@ -74,6 +74,9 @@ def main(validation_file, train_file, operation):
                 vec.append(question_prediction[i][j] * answer_prediction[i][j] * q_and_a_prediction[i][j])
             prediction.append(vec.index(max(vec)))
 
+    #PLOT(corpus, train_X)
+    #PLOT(corpus_validation, test_X)
+
     print('Accuracy: ', accuracy_score(prediction, labels))
 
     '''for i in range(len(prediction)):
@@ -113,9 +116,6 @@ def build_svm(corpus, corpus_validation, data_part):
 
     # print(Tfidf_vect.vocabulary_)
     # print(train_X_vector)
-
-    #PLOT(train_X)
-    #PLOT(test_X)
 
     svm = support_vector_machine(train_X, train_Y)
     prediction = svm.predict_proba(test_X)

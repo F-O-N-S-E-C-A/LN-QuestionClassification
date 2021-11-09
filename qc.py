@@ -38,10 +38,8 @@ def main(validation_file, train_file):
 
     support_vector_machine(train_X, test_X, train_Y, test_Y)
 
-    #PLOT_2D(train_X)
-    #PLOT_3D(train_X)
-    #PLOT_2D(test_X)
-    #PLOT_3D(test_X)
+    #PLOT(corpus, train_X)
+    #PLOT(corpus_validation, test_X)
 
 
 def add_answers(corpus):

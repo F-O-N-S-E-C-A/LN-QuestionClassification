@@ -5,7 +5,7 @@ import numpy as np
 import seaborn as sns
 from mpl_toolkits.mplot3d import Axes3D
 
-def PLOT(corpus, train_X, train_Y):
+def PLOT(corpus, train_X):
     pca = PCA(n_components = 4).fit(train_X.toarray())
     X_pca = pca.transform(train_X.toarray())
 
