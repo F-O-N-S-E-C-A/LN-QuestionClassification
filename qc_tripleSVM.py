@@ -144,7 +144,7 @@ def word_lemmatizer(corpus, column):
 
 
 def support_vector_machine(Train_X_Tfidf, Train_Y):
-    SVM = svm.SVC(C=1.0, kernel='linear', degree=3, gamma='auto', class_weight='balanced', probability=True)
+    SVM = svm.SVC(C=1.0, kernel='linear' , class_weight='balanced', probability=True)
     SVM.fit(Train_X_Tfidf, Train_Y)
     return SVM
 
