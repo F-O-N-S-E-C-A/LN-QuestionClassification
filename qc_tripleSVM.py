@@ -14,7 +14,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn import model_selection, naive_bayes, svm
 from sklearn.metrics import accuracy_score
 import random
-from plot import PLOT_2D, PLOT_3D
+from plot import PLOT
 
 random.seed(10)
 np.random.seed(999)
@@ -114,10 +114,8 @@ def build_svm(corpus, corpus_validation, data_part):
     # print(Tfidf_vect.vocabulary_)
     # print(train_X_vector)
 
-    #PLOT_2D(train_X)
-    #PLOT_3D(train_X)
-    #PLOT_2D(test_X)
-    #PLOT_3D(test_X)
+    #PLOT(train_X)
+    #PLOT(test_X)
 
     svm = support_vector_machine(train_X, train_Y)
     prediction = svm.predict_proba(test_X)

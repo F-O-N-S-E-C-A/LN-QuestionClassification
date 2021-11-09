@@ -2,8 +2,7 @@ REFS:
 https://www.saedsayad.com/support_vector_machine.htm
 https://medium.com/@bedigunjit/simple-guide-to-text-classification-nlp-using-svm-and-naive-bayes-with-python-421db3a72d34
 https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html
-https://stackoverflow.com/questions/54939424/plotting-vectorized-text-documents-in-matplotlib
-https://stackoverflow.com/questions/65241847/how-to-plot-3d-pca-with-different-colors
+https://stackoverflow.com/questions/61947343/plot-centroids-in-k-means-using-tf-idf
 
 
 DEPENDENCIES:
