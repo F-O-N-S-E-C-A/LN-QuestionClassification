@@ -17,10 +17,10 @@ import random
 
 random.seed(10)
 np.random.seed(999)
+
 MAX = 'max'
 WEIGHTED_SUM = 'weighted_sum'
 JOINT_PROB = 'joint_probability'
-
 
 
 def main(validation_file, train_file, operation):
@@ -38,6 +38,7 @@ def main(validation_file, train_file, operation):
     encoder = LabelEncoder()
     labels = encoder.fit_transform(corpus_validation['Label'])
     prediction = []
+
     # max - Accuracy:  0.878
     # weighted_sum - Accuracy: 0.864
     # joint_probability - Accuracy: 0.864
@@ -73,6 +74,12 @@ def main(validation_file, train_file, operation):
             prediction.append(vec.index(max(vec)))
 
     print('Accuracy: ', accuracy_score(prediction, labels))
+
+    '''for i in range(len(prediction)):
+        if (prediction[i] != labels[i]):
+            print(corpus['Q+A'][i])'''
+
+
 
 
 def concat_questions_answers(corpus):
