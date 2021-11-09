@@ -121,7 +121,7 @@ def build_svm(corpus, corpus_validation, data_part):
     #PLOT_2D(test_X)
     #PLOT_3D(test_X)
 
-    svm = support_vector_machine(train_X, test_X, train_Y, test_Y)
+    svm = support_vector_machine(train_X, train_Y)
     prediction = svm.predict_proba(test_X)
     return svm, prediction
 

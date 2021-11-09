@@ -37,7 +37,7 @@ def main(validation_file, train_file):
     #print(train_X)
     test_X = Tfidf_vect.transform(corpus_validation['lemma'])
 
-    support_vector_machine(train_X, test_X, train_Y, test_Y)
+    support_vector_machine(train_X, train_Y)
 
     #PLOT_2D(train_X)
     #PLOT_3D(train_X)
