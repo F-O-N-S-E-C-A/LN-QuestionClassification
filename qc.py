@@ -9,6 +9,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn import svm
 from sklearn.metrics import accuracy_score
 import random
+from plot import PLOT_2D, PLOT_3D
 
 random.seed(10)
 np.random.seed(999)
@@ -33,9 +34,15 @@ def main(validation_file, train_file):
     Tfidf_vect = TfidfVectorizer(max_features=5000)
     Tfidf_vect.fit(corpus['lemma'])
     train_X = Tfidf_vect.transform(corpus['lemma'])
+    #print(train_X)
     test_X = Tfidf_vect.transform(corpus_validation['lemma'])
 
     support_vector_machine(train_X, test_X, train_Y, test_Y)
+
+    #PLOT_2D(train_X)
+    #PLOT_3D(train_X)
+    #PLOT_2D(test_X)
+    #PLOT_3D(test_X)
 
 
 def add_answers(corpus):

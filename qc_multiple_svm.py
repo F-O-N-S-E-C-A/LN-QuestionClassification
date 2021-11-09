@@ -14,7 +14,7 @@ from nltk.corpus import wordnet as wn
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn import model_selection, naive_bayes, svm
 from sklearn.metrics import accuracy_score
-
+from plot import PLOT_2D, PLOT_3D
 
 def main(validation_file, train_file, operation):
     corpus = pd.read_csv(train_file, sep='\t', error_bad_lines=False, header=None, names=["Label", "Question", "Answer"])
@@ -91,7 +91,12 @@ def build_svm(corpus, corpus_validation, data_part):
     # print(Tfidf_vect.vocabulary_)
     # print(train_X_vector)
 
-    svm = support_vector_machine(train_X, train_Y)
+    #PLOT_2D(train_X)
+    #PLOT_3D(train_X)
+    #PLOT_2D(test_X)
+    #PLOT_3D(test_X)
+
+    svm = support_vector_machine(train_X, test_X, train_Y, test_Y)
     prediction = svm.predict_proba(test_X)
     return svm, prediction
 
