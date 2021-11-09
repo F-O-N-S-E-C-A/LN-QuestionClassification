@@ -14,6 +14,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn import model_selection, naive_bayes, svm
 from sklearn.metrics import accuracy_score
 import random
+import stats
 from plot import PLOT
 
 random.seed(10)
@@ -78,10 +79,8 @@ def main(validation_file, train_file, operation):
     #PLOT(corpus_validation, test_X)
 
     print('Accuracy: ', accuracy_score(prediction, labels))
+    #stats.accuracy_by_label(prediction, corpus_validation, labels)
 
-    '''for i in range(len(prediction)):
-        if (prediction[i] != labels[i]):
-            print(corpus['Q+A'][i])'''
 
 
 def concat_questions_answers(corpus):
