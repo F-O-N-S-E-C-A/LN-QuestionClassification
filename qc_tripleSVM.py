@@ -79,7 +79,7 @@ def main(validation_file, train_file, operation):
     #PLOT(corpus_validation, test_X)
 
     print('Accuracy: ', accuracy_score(prediction, labels))
-    #stats.accuracy_by_label(prediction, corpus_validation, labels)
+    #stats.accuracy_by_label(prediction, corpus_validation, labels, encoder)
 
 
 
