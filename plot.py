@@ -9,9 +9,7 @@ def PLOT(corpus, train_X, train_Y):
     pca = PCA(n_components = 4).fit(train_X.toarray())
     X_pca = pca.transform(train_X.toarray())
 
-    labels = [corpus[0][i] for i in corpus[0]]
-
-    print(labels)
+    labels = [i for i in corpus[0]]
 
     sns.scatterplot(X_pca[:,0], X_pca[:, 1],  hue=labels, legend='full',palette="Set2")
     plt.show()
