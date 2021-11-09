@@ -60,7 +60,7 @@ def pre_p(corpus):
 
 
 def support_vector_machine(Train_X_Tfidf, Test_X_Tfidf, Train_Y, Test_Y):
-    SVM = svm.SVC(C=1.0, kernel='linear', degree=3, gamma='auto')
+    SVM = svm.SVC(kernel='linear')
     SVM.fit(Train_X_Tfidf, Train_Y)
     predictions_SVM = SVM.predict(Test_X_Tfidf)
     print("SVM Accuracy: ", accuracy_score(predictions_SVM, Test_Y))

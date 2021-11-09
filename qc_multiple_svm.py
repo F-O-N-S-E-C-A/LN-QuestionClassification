@@ -91,7 +91,7 @@ def build_svm(corpus, corpus_validation, data_part):
     # print(Tfidf_vect.vocabulary_)
     # print(train_X_vector)
 
-    svm = support_vector_machine(train_X, test_X, train_Y, test_Y)
+    svm = support_vector_machine(train_X, train_Y)
     prediction = svm.predict_proba(test_X)
     return svm, prediction
 
@@ -126,7 +126,7 @@ def lemmatization(corpus, column):
     print(corpus)
 
 
-def support_vector_machine(Train_X_Tfidf, Test_X_Tfidf, Train_Y, Test_Y):
+def support_vector_machine(Train_X_Tfidf, Train_Y):
     # Classifier - Algorithm - SVM
     # fit the training dataset on the classifier
     SVM = svm.SVC(C=1.0, kernel='linear', degree=3, gamma='auto', class_weight='balanced', probability=True)
