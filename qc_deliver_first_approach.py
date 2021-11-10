@@ -10,9 +10,12 @@ from sklearn import svm
 from sklearn.metrics import accuracy_score
 import random
 import stats
+import warnings
 
 random.seed(10)
 np.random.seed(999)
+
+warnings.filterwarnings("ignore")
 
 
 def main(validation_file, train_file):
@@ -37,7 +40,11 @@ def main(validation_file, train_file):
     #print(train_X)
     test_X = Tfidf_vect.transform(corpus_validation['lemma'])
 
-    support_vector_machine(train_X, test_X, train_Y, test_Y, corpus_validation)
+    prediction = support_vector_machine(train_X, test_X, train_Y, test_Y, corpus_validation)
+    prediction = encoder.inverse_transform(prediction)
+
+    for p in prediction:
+        print(p)
 
     #PLOT(corpus, train_X)
     #PLOT(corpus_validation, test_X)
@@ -68,23 +75,8 @@ def support_vector_machine(Train_X_Tfidf, Test_X_Tfidf, Train_Y, Test_Y, corpus_
     SVM = svm.SVC(kernel='linear')
     SVM.fit(Train_X_Tfidf, Train_Y)
     predictions_SVM = SVM.predict(Test_X_Tfidf)
-    print("SVM Accuracy: ", accuracy_score(predictions_SVM, Test_Y))
-
-    '''accuracies = []
-    occurencies = {'LITERATURE': 0, 'HISTORY': 0, 'SCIENCE': 0, 'MUSIC': 0, 'GEOGRAPHY': 0}
-    for i in range(len(predictions_SVM)):
-        if (predictions_SVM[i] == Test_Y[i]):
-            occurencies[corpus_validation[0][i]] += 1
-    classes_validation = {}
-    for c in corpus_validation[0]:
-        if c in classes_validation:
-            classes_validation[c] += 1
-        else:
-            classes_validation[c] = 1
-    for keys in occurencies.keys():
-        accuracies.append(occurencies[keys] / classes_validation[keys])
-
-    print(accuracies)'''
+    return predictions_SVM
+    #print("SVM Accuracy: ", accuracy_score(predictions_SVM, Test_Y))
 
 def man():
     print('LN 2021 - Tiago Fonseca - 102138 & João Lopes - 90732\n')

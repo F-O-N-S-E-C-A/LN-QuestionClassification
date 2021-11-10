@@ -13,3 +13,4 @@ def PLOT(corpus, train_X):
 
     sns.scatterplot(X_pca[:,0], X_pca[:, 1],  hue=labels, legend='full',palette="Set2")
     plt.show()
+
