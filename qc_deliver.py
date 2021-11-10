@@ -1,8 +1,6 @@
 # LN 2021 - Tiago Fonseca - 102138 & João Lopes - 90732
 
 import sys
-import warnings
-warnings.filterwarnings("ignore", category=FutureWarning)
 import pandas as pd
 import numpy as np
 from nltk.tokenize import word_tokenize
@@ -16,7 +14,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn import model_selection, naive_bayes, svm
 from sklearn.metrics import accuracy_score
 import random
-import stats
+#import stats
 from plot import PLOT
 
 random.seed(10)
