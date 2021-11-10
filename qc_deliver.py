@@ -1,6 +1,8 @@
 # LN 2021 - Tiago Fonseca - 102138 & João Lopes - 90732
 
 import sys
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning)
 import pandas as pd
 import numpy as np
 from nltk.tokenize import word_tokenize
@@ -15,12 +17,10 @@ from sklearn import model_selection, naive_bayes, svm
 from sklearn.metrics import accuracy_score
 import random
 import stats
-import warnings
 from plot import PLOT
 
 random.seed(10)
 np.random.seed(999)
-warnings.filterwarnings("ignore")
 
 MAX = 'max'
 WEIGHTED_SUM = 'weighted_sum'
